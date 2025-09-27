@@ -249,3 +249,18 @@ mat3=np.empty((3,3),dtype=np.float32) #una matriz vacia con orden 3 de tipo de d
 print(mat3)
 mat3[0][0]= np.pi
 print(mat3)
+
+mat6=np.arange(2.5,12,2) #genrando arreglo unidimensional 
+print(mat6)
+mat62=np.arange(2,4,0.5,dtype=np.float32)
+print(mat62)
+
+import matplotlib.pyplot as plt #matplotlib es una libreria y su modulo que ese usa en pyplot
+import numpy as np
+plt.plot([0,1,2,3,4],[1,4,9,16,25],marker='o',color='green',linestyle='dashed')
+plt.ylabel('eje Y')
+plt.xlabel('eje X')
+plt.show()
+x=np.linspace(-5,5,50)# el 100 se refiere q son 100 puntos en la grafica
+y=np.power(x,2)
+plt.plot(x,y,marker='o', color='red',linestyle='dashed')
