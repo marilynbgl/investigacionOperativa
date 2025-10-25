@@ -39,11 +39,18 @@ def ceros_en_diagonal(A):
         A[i][j] = 0
     return A
 
-def sustRegresiva(A,b): #sustitucion regresiva
+def sustRegresiva(A,b): #sustitucion regresiva RESUELVE UN SISTEMA ESCALONADA CON A TRIANGULAR SUPERIOR
    N= b.shape[0] #A matriz cuadrada b un arreglo 
    x= np.zeros((N,1))
    for i in range (N-1,-1,-1):
       x[i,0]=(b[i,0]-np.dot(A[i,i+1:N],x[i+1:N,0]))/A[i,i]
+   return x #arreglo bidimensional
+
+def sustProgresiva(A,b): #sustitucion progresiva RESUELVE UN SISTEMA ESCALONADA CON A TRIANGULAR inferior
+   N= b.shape[0] #A y b matriz cuadrada b un arreglo 
+   x= np.zeros((N,1))
+   for i in range (0,N):
+      x[i,0]=(b[i,0]-np.dot(A[i,0:i],x[0:i,0]))/A[i,i]
    return x #arreglo bidimensional
 
 def GaussElimSimple(A,b): # si hay ceros en la diagonal no funciona bien es sin pivoteo 
@@ -55,9 +62,37 @@ def GaussElimSimple(A,b): # si hay ceros en la diagonal no funciona bien es sin 
    x=sustRegresiva(A1,b1)
    return x # arreglo bidimensional
 
+def GaussElimWithPiv(A,b):
+   Ab= np.append(A,b,axis=1) #matriz aumentada
+   escalonaConPiv(Ab)
+   A1= Ab[:,0:Ab.shape[1]-1].copy()
+   b1= Ab[:,Ab.shape[1]-1].copy()
+   b1= b1.reshape(b.shape[0],1)
+   x= sustRegresiva(A1,b1)
+   return x # array bidimensional   
+
 def hilbert_matrix(n):# ejemplo de una matriz mal condicionada
   A= np.zeros((n,n))
   for i in range (1,n+1):
      for j in range (1,n+1):
         A[i-1,j-1]=1/(i+j-1)
   return A
+
+def LUdeComposition(A): # para matrices cuadradas 
+   nrows= A.shape[0]
+   U=A.copy()
+   L= np.eye(nrows,nrows,dtype=np.float64) # matriz de numeros decimales y es la matriz identidad solo en la diagonal hay unos
+   for col in range (0,nrows-1): # AQUI VA A CORRER HASTA LA PENULTIMA COLUMNA
+      for row in range (col+1,nrows):
+         mult=U[row,col]/U[col,col]
+         L[row,col]=mult
+         operacionFila(U,row,col,mult)
+   return (L,U)
+
+def solveByLU(A,b): # USANDO LA DESCOMPOSICION LU 
+   LU= LUdeComposition(A) 
+   L=LU[0]
+   U=LU[1]
+   Y=sustProgresiva(L,b)
+   X=sustRegresiva(U,Y)
+   return X # arreglo bidimensional
