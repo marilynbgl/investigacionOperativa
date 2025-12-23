@@ -1,4 +1,6 @@
 import numpy as np
+import numpy.polynomial as P
+
 def interCambiaFilas(A,fil_i,fil_j):
     A[[fil_i,fil_j],:]=A[[fil_j,fil_i],:]
 
@@ -96,3 +98,14 @@ def solveByLU(A,b): # USANDO LA DESCOMPOSICION LU
    Y=sustProgresiva(L,b)
    X=sustRegresiva(U,Y)
    return X # arreglo bidimensional
+
+def interpLagrange(cx,cy):
+    n= len(cx)
+    p = P.Polynomial([0])
+    for i in range(n):
+        mascara = np.ones(n,dtype=bool)
+        mascara[i] = False
+        raices = cx[mascara]
+        Laux = P.Polynomial.fromroots(raices)
+        p = p + cy[i]*Laux/Laux(cx[i])
+    return p
